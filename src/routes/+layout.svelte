@@ -1,64 +1,75 @@
 <script>
-	import { browser } from '$app/environment';
-	import { page } from '$app/stores';
-	import { webVitals } from '$lib/vitals';
-	import Header from './Header.svelte';
-	import './styles.css';
+	import Backdrop from "./Backdrop.svelte";
+	import "./styles.css";
+	import { fly } from "svelte/transition";
+	import Page from "./+page.svelte";
+	import ProjectSection from "./ProjectSection.svelte";
+	import ExperienceSection from "./ExperienceSection.svelte";
 
-	/** @type {import('./$types').LayoutServerData} */
-	export let data;
-
-	$: if (browser && data?.analyticsId) {
-		webVitals({
-			path: $page.url.pathname,
-			params: $page.params,
-			analyticsId: data.analyticsId
-		});
-	}
+	let viewState = "mid";
 </script>
 
 <div class="app">
-	<Header />
-
 	<main>
-		<slot />
+		<Backdrop>
+			<div class="row movable-element {viewState}">
+				<div class="">
+					<ProjectSection />
+				</div>
+				<div class="page">
+					<Page bind:leftRightTransitionState={viewState} />
+				</div>
+				<ExperienceSection />
+			</div>
+		</Backdrop>
 	</main>
-
-	<footer>
-		<p>visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to learn SvelteKit</p>
-	</footer>
 </div>
 
 <style>
+	    .project-section-wrapper {
+        flex: 1;
+        overflow-y: auto; /* Allow vertical scrolling */
+        height: 100vh; /* Ensure it covers the full viewport height */
+        position: relative;
+    }
+	.page {
+		display: flex;
+		justify-content: center;
+		align-self: center;
+		overflow: hidden;
+		height: 100vh; /* Ensures the height covers the full viewport */
+		width: 100vw; /* Ensures the width covers the full viewport */
+		position: relative;
+	}
+	.movable-element {
+		transition: transform 0.5s ease; /* Smooth transition */
+	}
+
+	.left {
+		transform: translateX(80%); /* Move left */
+	}
+
+	.right {
+		transform: translateX(-75%); /* Move right */
+	}
+
+	.mid {
+		transform: translateX(0); /* Center */
+	}
+	.row {
+		display: flex;
+		width: 100%;
+		position: relative;
+	}
 	.app {
 		display: flex;
-		flex-direction: column;
-		min-height: 100vh;
-	}
-
-	main {
-		flex: 1;
-		display: flex;
-		flex-direction: column;
-		padding: 1rem;
-		width: 100%;
-		max-width: 64rem;
-		margin: 0 auto;
-		box-sizing: border-box;
-	}
-
-	footer {
-		display: flex;
-		flex-direction: column;
 		justify-content: center;
-		align-items: center;
-		padding: 12px;
+		align-self: center;
+		overflow: hidden;
+		height: 100vh; /* Ensures the height covers the full viewport */
+		width: 100vw; /* Ensures the width covers the full viewport */
+		position: relative;
 	}
-
-	footer a {
-		font-weight: bold;
-	}
-
 	@media (min-width: 480px) {
 		footer {
 			padding: 12px 0;
